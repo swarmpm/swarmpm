@@ -61,17 +61,4 @@ export class SwarmClient {
 
     return json;
   }
-  async getBucketData(batchID: string): Promise<{
-    "depth": number;
-    "bucketDepth": number;
-    "bucketUpperBound": number;
-    "buckets": {
-      "bucketID": number;
-      "collisions": number;
-    }[];
-  }> {
-    const res = await fetch(`${this.#apiUrl}/stamps/${batchID}/buckets`);
-
-    return await res.json();
-  }
 }

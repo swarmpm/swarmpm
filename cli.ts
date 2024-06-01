@@ -4,6 +4,7 @@ import {
   createPublicClient,
   createWalletClient,
   http,
+  PrivateKeyAccount,
 } from "https://esm.sh/viem@2.13.3";
 import { mainnet } from "https://esm.sh/viem@2.13.3/chains";
 import { SwarmClient } from "./swarm.ts";
@@ -22,6 +23,7 @@ const publicClient = createPublicClient({
 const walletClient = createWalletClient({
   transport: http("https://eth.llamarpc.com"),
   chain: mainnet,
+  // account: privateKeyToAccount(),
 });
 
 quota.command("buy", async (pos) => {
@@ -46,7 +48,7 @@ cli.command("publish", async ([batchID]) => {
   const files = await readDir(".");
 
   const isConfirmed = confirm(
-    `${files.map((file) => file.name).join("\n")}\nUpload package on Swarm?`,
+    `${files.map((f) => f.name).join("\n")}\nUpload package on Swarm?`,
   );
 
   if (!isConfirmed) {

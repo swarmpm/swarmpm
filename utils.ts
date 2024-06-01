@@ -1,14 +1,13 @@
-import { walk } from "https://deno.land/std@0.224.0/fs/walk.ts";
-import * as mantaray from "https://esm.sh/mantaray-js@1.0.3";
-
 export const readDir = async (dir = ".") => {
   const files: File[] = [];
   for await (
-    const entry of walk(dir, { includeDirs: false, skip: [/^.*\/\.[^/]*$/] })
+    const entry of Deno.readDir(dir)
   ) {
-    const blob = await Deno.readFile(entry.path);
-    const file = new File([blob], entry.name);
-    files.push(file);
+    if (entry.isFile && !entry.name.startsWith(".")) {
+      const blob = await Deno.readFile(entry.name);
+      const file = new File([blob], entry.name);
+      files.push(file);
+    }
   }
   return files;
 };

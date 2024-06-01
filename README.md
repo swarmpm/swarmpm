@@ -46,7 +46,8 @@ Proposing a Safe transaction
 Propose transaction here: https://app.safe.global/transactions/queue?safe=eth:0x0F...53dA0...262
 ```
 
-Confirm transaction in Safe
+Confirm the transaction in [Safe](https://app.safe.global/transactions/queue):
+
 ![image](https://github.com/swarmpm/swarmpm/assets/28968492/8e56bd65-51ae-4fec-8928-8e40032b6f7c)
 
 ### Import the module

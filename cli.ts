@@ -1,5 +1,11 @@
 import { CLI } from "https://deno.land/x/spektr@0.0.5/spektr.ts";
 import { colorPlugin } from "https://deno.land/x/spektr@0.0.5/plugins/color.ts";
+import {
+  createPublicClient,
+  createWalletClient,
+  http,
+} from "https://esm.sh/viem@2.13.3";
+import { mainnet } from "https://esm.sh/viem@2.13.3/chains";
 import { SwarmClient } from "./swarm.ts";
 import { readDir } from "./utils.ts";
 
@@ -9,9 +15,18 @@ const swarm = new SwarmClient();
 
 const quota = cli.program("quota");
 
+const publicClient = createPublicClient({
+  transport: http("https://eth.llamarpc.com"),
+});
+
+const walletClient = createWalletClient({
+  transport: http("https://eth.llamarpc.com"),
+  chain: mainnet,
+});
+
 quota.command("buy", async (pos) => {
   const res = await swarm.buyPostageBatch({
-    amount: pos[0] as number,
+    bzzTokenAmount: pos[0] as number,
     depth: pos[1] as number,
   });
 
@@ -44,7 +59,7 @@ cli.command("publish", async ([batchID]) => {
     ...files,
   );
 
-  console.log(`Uploaded to Swarm: ${refID}`);
+  console.log(refID);
 }, {
   options: [
     {

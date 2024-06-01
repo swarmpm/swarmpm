@@ -7,7 +7,10 @@ export class SwarmClient {
   }
 
   async upload(
-    { postageBatchID }: { postageBatchID: string },
+    { postageBatchID, indexFile }: {
+      postageBatchID: string;
+      indexFile?: string;
+    },
     ...files: File[]
   ): Promise<string> {
     if (!postageBatchID) throw new Error("Missing postage batch ID");
@@ -18,9 +21,14 @@ export class SwarmClient {
     const res = await fetch(`${this.#apiUrl}/bzz`, {
       method: "POST",
       body: fd,
-      headers: {
-        "swarm-postage-batch-id": postageBatchID,
-      },
+      headers: indexFile
+        ? {
+          "swarm-postage-batch-id": postageBatchID,
+          "swarm-index-document": indexFile,
+        }
+        : {
+          "swarm-postage-batch-id": postageBatchID,
+        },
     });
 
     const json = await res.json();
@@ -30,16 +38,28 @@ export class SwarmClient {
     return json.reference;
   }
   async buyPostageBatch(
-    { amount, depth = 20 }: { amount: number; depth?: number },
+    { bzzTokenAmount = 1, depth = 20 }: {
+      bzzTokenAmount?: number;
+      depth?: number;
+    },
   ): Promise<{
     batchID: string;
     txHash: `0x${string}`;
   }> {
-    const res = await fetch(`${this.#apiUrl}/stamps/${amount}/${depth}`, {
-      method: "POST",
-    });
+    const amount = bzzTokenAmount * 1_000_000_000;
 
-    return await res.json();
+    const res = await fetch(
+      `${this.#apiUrl}/stamps/${amount}/${depth}`,
+      {
+        method: "POST",
+      },
+    );
+
+    const json = await res.json();
+
+    if (!res.ok) throw new Error(json.message);
+
+    return json;
   }
   async getBucketData(batchID: string): Promise<{
     "depth": number;
